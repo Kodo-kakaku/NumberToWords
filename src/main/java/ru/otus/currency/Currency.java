@@ -1,10 +1,11 @@
 package ru.otus.currency;
 
+import ru.otus.enums.NounCases;
+
 public interface Currency {
     static final String MINUS = "минус";
     static final String ZERO  = "ноль";
 
-    // Gender ? Trillion?
     static final String[] THOUSAND = {"тысяча", "тысячи", "тысяч"};
     static final String[] MILLION  = {"миллион", "миллиона", "миллионов"};
     static final String[] MILLIARD = {"миллиард", "миллиарда", "миллиардов"};
