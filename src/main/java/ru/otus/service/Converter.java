@@ -23,41 +23,47 @@ public class Converter {
 
     // TODO Implementation of currency transfer in the method
     public String Convert() {
-        this.result = new StringBuilder();
+        result = new StringBuilder();
 
-        if (this.userInput < 0) {
-            this.result.append(this.currency.MINUS);
-            this.userInput = -this.userInput;
-        } else if (this.userInput == 0) {
-            this.result.append(this.currency.ZERO);
+        if (userInput < 0) {
+            result.append(currency.MINUS);
+            userInput = -userInput;
+        } else if (userInput == 0) {
+            result.append(currency.ZERO);
         }
 
-        if (this.userInput >= TRILLION) {
+        if (userInput >= TRILLION) {
             System.out.println("EXCEPTION");
         }
 
-        if (this.userInput >= this.MILLIARD) {
-            long value = this.userInput / this.MILLIARD;
+        long value;
+        if (userInput >= MILLIARD) {
+            value = userInput / MILLIARD;
             AppendNumber((int)value, NounCases.MASCULINE); /// сужающие приведение типов!!!
-            //AppendUnitOfMeasure(value % 100, unit);
-            userInput = userInput % MILLIARD;
-        }
-/*
-        // Write millions
-        if (number >= E6) {
-            var value = number / E6;
-            Append((int) value, Constants.Е6Unit);
-            number = number % E6;
+            AppendUnitOfMeasure(value % 100);
+            userInput %= MILLIARD;
         }
 
-        // Write thouthands
-        if (number >= E3) {
-            var value = number / E3;
-            Append((int) value, Constants.Е3Unit);
-            number = number % E3;
+        if(userInput >= MILLION) {
+            value = userInput / MILLION;
+            AppendNumber((int)value, NounCases.MASCULINE);
+            AppendUnitOfMeasure(value % 100);
+            userInput %= MILLION;
         }
 
- */     return null;
+        if(userInput >= THOUSAND) {
+            value = userInput / THOUSAND;
+            AppendNumber((int) value, NounCases.FEMININE);
+            AppendUnitOfMeasure(value % 100);
+            userInput %= THOUSAND;
+        }
+
+        if (userInput > 0) {
+            AppendNumber((int) userInput, NounCases.FEMININE);
+        }
+        AppendUnitOfMeasure(5);
+
+      return result.toString();
     }
 
     private void AppendNumber(int value, NounCases noun) {
@@ -94,30 +100,16 @@ public class Converter {
             this.result.append(currency.DIGITS[value][noun.ordinal()]);
         }
     }
-/*
-    private void AppendUnitOfMeasure(int form, UnitOfMeasure unit) {
-        Debug.Assert(_result != null);
-        Debug.Assert(form >= 0);
-        Debug.Assert(form < 100);
 
-        if (form > 20) {
-            form = form % 10;
-        }
+    private void AppendUnitOfMeasure(long form) {
+        // Debug.Assert(_result != null);
+        // Debug.Assert(form >= 0);
+        // Debug.Assert(form < 100);
+        int index = 2;
+        if (form > 20) { form %= 10; }
 
-        if (form >= 5) {
-            _result.Append(' ');
-            _result.Append(unit.Form5);
-        } else if (form >= 2) {
-            _result.Append(' ');
-            _result.Append(unit.Form2);
-        } else if (form == 1) {
-            _result.Append(' ');
-            _result.Append(unit.Form1);
-        } else    // 0 - should use form 5
-        {
-            _result.Append(' ');
-            _result.Append(unit.Form5);
-        }
+        if (form >= 2 && form <= 5) { index = 1; }
+        else if (form == 1) { index = 0; }
+        result.append(' ').append(currency.getSeniorCurrency(index));
     }
-*/
 }
