@@ -6,12 +6,12 @@ public class RussianCurrencyImpl implements Currency {
     private static final String[] KOPECK = {"копейка", "копейки", "копеек"};
 
     @Override
-    public String getSeniorCurrency(int index) {
-        return RUBLES[index];
+    public String[] getSeniorCurrency() {
+        return RUBLES;
     }
 
     @Override
-    public String getJuniorCurrency(int index) {
-        return KOPECK[index];
+    public String[] getJuniorCurrency() {
+        return KOPECK;
     }
 }

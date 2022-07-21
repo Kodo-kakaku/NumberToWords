@@ -39,34 +39,35 @@ public class Converter {
         long value;
         if (userInput >= MILLIARD) {
             value = userInput / MILLIARD;
-            AppendNumber((int)value, NounCases.MASCULINE); /// сужающие приведение типов!!!
-            AppendUnitOfMeasure(value % 100);
+            AppendNumber(value, NounCases.MASCULINE); /// сужающие приведение типов!!!
+            AppendUnitOfMeasure(value % 100, currency.MILLIARD);
             userInput %= MILLIARD;
         }
 
         if(userInput >= MILLION) {
             value = userInput / MILLION;
-            AppendNumber((int)value, NounCases.MASCULINE);
-            AppendUnitOfMeasure(value % 100);
+            AppendNumber(value, NounCases.MASCULINE);
+            AppendUnitOfMeasure(value % 100, currency.MILLION);
             userInput %= MILLION;
         }
 
         if(userInput >= THOUSAND) {
             value = userInput / THOUSAND;
-            AppendNumber((int) value, NounCases.FEMININE);
-            AppendUnitOfMeasure(value % 100);
+            AppendNumber(value, NounCases.FEMININE);
+            AppendUnitOfMeasure(value % 100, currency.THOUSAND);
             userInput %= THOUSAND;
         }
 
         if (userInput > 0) {
-            AppendNumber((int) userInput, NounCases.FEMININE);
+            AppendNumber(userInput, NounCases.MASCULINE);
+            AppendUnitOfMeasure(userInput, currency.THOUSAND);
         }
-        AppendUnitOfMeasure(5);
+        AppendUnitOfMeasure(5, currency.getSeniorCurrency());
 
       return result.toString();
     }
 
-    private void AppendNumber(int value, NounCases noun) {
+    private void AppendNumber(long value, NounCases noun) {
         //Debug.Assert(_result != null);
         //Debug.Assert(value > 0);
         //Debug.Assert(value < 1000);
@@ -74,42 +75,47 @@ public class Converter {
         // Write hundreds
 
         if (value >= 100) {
-            int index = value / 100;
+            long index = value / 100;
             value = value % 100;
             this.result.append(' ');
-            this.result.append(currency.HUNDREDS[index]);
+            this.result.append(currency.HUNDREDS[(int) index]);
         }
 
         // Write dozens
 
         if (value >= 20) {
-            int index = value / 10;
+            long index = value / 10;
             value = value % 10;
             this.result.append(' ');
-            this.result.append(currency.DOZENS[index]);
+            this.result.append(currency.DOZENS[(int) index]);
         } else if (value >= 10) {
-            int index = value - 10;
+            long index = value - 10;
             this.result.append(' ');
-            this.result.append(currency.DOZENS[index]);
+            this.result.append(currency.TENS[(int) index]);
             return;
         }
 
         // Write digit
         if (value > 0) {
             this.result.append(' ');
-            this.result.append(currency.DIGITS[value][noun.ordinal()]);
+            this.result.append(currency.DIGITS[(int) value][noun.ordinal()]);
         }
     }
 
-    private void AppendUnitOfMeasure(long form) {
+    private void AppendUnitOfMeasure(long form, String[] date) {
         // Debug.Assert(_result != null);
         // Debug.Assert(form >= 0);
         // Debug.Assert(form < 100);
-        int index = 2;
+
         if (form > 20) { form %= 10; }
 
-        if (form >= 2 && form <= 5) { index = 1; }
-        else if (form == 1) { index = 0; }
-        result.append(' ').append(currency.getSeniorCurrency(index));
+        int index = 2;
+        if (form == 1) {
+            index = 0;
+        } else if (form >= 2 && form < 5) {
+            index = 1;
+        }
+
+        result.append(' ').append(date[index]);
     }
 }
