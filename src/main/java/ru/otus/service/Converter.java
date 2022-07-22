@@ -1,121 +1,90 @@
 package ru.otus.service;
 
+import ru.otus.constants.NumNamesConstants;
 import ru.otus.currency.Currency;
 import ru.otus.enums.NounCases;
 
-import java.math.BigDecimal;
-
 public class Converter {
-    private final long THOUSAND = 1_000L;
-    private final long MILLION = 1_000_000L;
-    private final long MILLIARD = 1_000_000_000L;
-    private final long TRILLION = 1_000_000_000_000L;
-
-    private final long MAX_VALUE = TRILLION - 1;
-    private StringBuilder result;
     private long userInput;
     private final Currency currency;
+    private final StringBuilder result;
+    private static final long[] BIG_NUMS = {
+            1_000_000_000L,
+            1_000_000L,
+            1_000L
+    };
 
     public Converter(long userInput, Currency currency) {
         this.userInput = userInput;
         this.currency = currency;
+        this.result = new StringBuilder(100);
     }
 
-    // TODO Implementation of currency transfer in the method
     public String Convert() {
-        result = new StringBuilder();
+        if(userInput == 0) {
+            result.append(NumNamesConstants.ZERO);
+            appendUnit(userInput, currency.getSeniorCurrency());
+            return result.toString().trim();
+        }
 
         if (userInput < 0) {
-            result.append(currency.MINUS);
+            result.append(NumNamesConstants.MINUS);
             userInput = -userInput;
-        } else if (userInput == 0) {
-            result.append(currency.ZERO);
         }
 
-        if (userInput >= TRILLION) {
-            System.out.println("EXCEPTION");
-        }
+        return performConversion();
+    }
 
-        long value;
-        if (userInput >= MILLIARD) {
-            value = userInput / MILLIARD;
-            AppendNumber(value, NounCases.MASCULINE); /// сужающие приведение типов!!!
-            AppendUnitOfMeasure(value % 100, currency.MILLIARD);
-            userInput %= MILLIARD;
-        }
-
-        if(userInput >= MILLION) {
-            value = userInput / MILLION;
-            AppendNumber(value, NounCases.MASCULINE);
-            AppendUnitOfMeasure(value % 100, currency.MILLION);
-            userInput %= MILLION;
-        }
-
-        if(userInput >= THOUSAND) {
-            value = userInput / THOUSAND;
-            AppendNumber(value, NounCases.FEMININE);
-            AppendUnitOfMeasure(value % 100, currency.THOUSAND);
-            userInput %= THOUSAND;
+    private String performConversion() {
+        for (int i = 0; i < BIG_NUMS.length; i++) {
+            if (userInput >= BIG_NUMS[i]) {
+                long quantity = userInput / BIG_NUMS[i];
+                appendNumber(quantity, NumNamesConstants.NOUN_CASES[i]);
+                appendUnit(quantity % 100, NumNamesConstants.BIG_NUM_NAMES[i]);
+                userInput %= BIG_NUMS[i];
+            }
         }
 
         if (userInput > 0) {
-            AppendNumber(userInput, NounCases.MASCULINE);
-            AppendUnitOfMeasure(userInput, currency.THOUSAND);
+            appendNumber(userInput, NumNamesConstants.NOUN_CASES[0]);
         }
-        AppendUnitOfMeasure(5, currency.getSeniorCurrency());
+        appendUnit(userInput, currency.getSeniorCurrency());
 
-      return result.toString();
+      return result.toString().trim();
     }
 
-    private void AppendNumber(long value, NounCases noun) {
-        //Debug.Assert(_result != null);
-        //Debug.Assert(value > 0);
-        //Debug.Assert(value < 1000);
-
-        // Write hundreds
-
-        if (value >= 100) {
-            long index = value / 100;
-            value = value % 100;
-            this.result.append(' ');
-            this.result.append(currency.HUNDREDS[(int) index]);
+    private void appendNumber(long quantity, NounCases nounCases) {
+        if (quantity >= 100) {
+            long index = quantity / 100;
+            quantity %= 100;
+            this.result.append(NumNamesConstants.HUNDREDS[(int) index]);
         }
 
-        // Write dozens
-
-        if (value >= 20) {
-            long index = value / 10;
-            value = value % 10;
-            this.result.append(' ');
-            this.result.append(currency.DOZENS[(int) index]);
-        } else if (value >= 10) {
-            long index = value - 10;
-            this.result.append(' ');
-            this.result.append(currency.TENS[(int) index]);
+        if (quantity >= 20) {
+            long index = quantity / 10;
+            quantity %= 10;
+            this.result.append(NumNamesConstants.DOZENS[(int) index]);
+        } else if (quantity >= 10) {
+            long index = quantity - 10;
+            this.result.append(NumNamesConstants.TENS[(int) index]);
             return;
         }
 
-        // Write digit
-        if (value > 0) {
-            this.result.append(' ');
-            this.result.append(currency.DIGITS[(int) value][noun.ordinal()]);
+        if (quantity > 0) {
+            this.result.append(NumNamesConstants.DIGITS[(int) quantity][nounCases.ordinal()]);
         }
     }
 
-    private void AppendUnitOfMeasure(long form, String[] date) {
-        // Debug.Assert(_result != null);
-        // Debug.Assert(form >= 0);
-        // Debug.Assert(form < 100);
-
-        if (form > 20) { form %= 10; }
+    private void appendUnit(long userInput, String[] date) {
+        if (userInput > 20) { userInput %= 10; }
 
         int index = 2;
-        if (form == 1) {
-            index = 0;
-        } else if (form >= 2 && form < 5) {
+        if (userInput >= 2 && userInput < 5) {
             index = 1;
+        } else if (userInput == 1) {
+            index = 0;
         }
 
-        result.append(' ').append(date[index]);
+        result.append(date[index]);
     }
 }

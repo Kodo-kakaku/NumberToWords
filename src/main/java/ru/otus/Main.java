@@ -5,22 +5,23 @@ import ru.otus.enums.CurrencyNames;
 import ru.otus.factory.CurrencyFactory;
 import ru.otus.service.Converter;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        if(scanner.hasNextLong()) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            long userInput = scanner.nextLong();
             Currency currencyRubles = new CurrencyFactory().getCurrency(CurrencyNames.RUBLES);
-            Converter converter = new Converter(scanner.nextLong(), currencyRubles);
+            Converter converter = new Converter(userInput, currencyRubles);
             String convertNumToWordResult = converter.Convert();
-            System.out.println("Answer: " + convertNumToWordResult);
-        } else {
-            // Боросить исключение какое нибудь
-            System.out.println("?????." +
-                    " ????? ?? -> '.'");
+            System.out.println(convertNumToWordResult);
+        } catch (InputMismatchException | ArrayIndexOutOfBoundsException e) {
+            System.out.println("""
+                    Введите число до миллиона! Ввод осуществляется цифрами!
+                    Пример:\s
+                    Ввод: 1000000000\s
+                    Вывод: один миллиард рублей""");
         }
-        scanner.close();
     }
 }

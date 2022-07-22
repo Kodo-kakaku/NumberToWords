@@ -4,7 +4,6 @@ import ru.otus.currency.Currency;
 import ru.otus.currency.RussianCurrencyImpl;
 import ru.otus.enums.CurrencyNames;
 
-
 public class CurrencyFactory {
     public Currency getCurrency(CurrencyNames name) {
         return switch(name) {
