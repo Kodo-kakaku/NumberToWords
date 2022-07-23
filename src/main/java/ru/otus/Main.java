@@ -12,9 +12,9 @@ public class Main {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             long userInput = scanner.nextLong();
-            Currency currencyRubles = new CurrencyFactory().getCurrency(CurrencyNames.RUBLES);
+            Currency currencyRubles = new CurrencyFactory().createCurrency(CurrencyNames.RUBLES);
             Converter converter = new Converter(userInput, currencyRubles);
-            String convertNumToWordResult = converter.Convert();
+            String convertNumToWordResult = converter.convert();
             System.out.println(convertNumToWordResult);
         } catch (InputMismatchException | ArrayIndexOutOfBoundsException e) {
             System.out.println("""

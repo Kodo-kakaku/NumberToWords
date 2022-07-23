@@ -1,11 +1,11 @@
 package ru.otus.constants;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.otus.enums.NounCases;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NumNamesConstants {
-    private NumNamesConstants() {
-    }
-
     public static final String MINUS = "минус";
     public static final String ZERO = " ноль";
 
@@ -19,7 +19,7 @@ public class NumNamesConstants {
 
     public static final String[] TENS = {
             " десять", " одинадцать", " двенадцать", " тринадцать", " четырнадцать",
-            "  пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать"
+            " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать"
     };
 
     public static final String[] DOZENS = {

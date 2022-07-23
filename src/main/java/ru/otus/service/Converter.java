@@ -20,7 +20,7 @@ public class Converter {
         this.result = new StringBuilder(100);
     }
 
-    public String Convert() {
+    public String convert() {
         if(userInput == 0) {
             result.append(NumNamesConstants.ZERO);
             appendUnit(userInput, currency.getSeniorCurrency());
